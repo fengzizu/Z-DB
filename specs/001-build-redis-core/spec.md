@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-build-redis-core`
 **Created**: 2025-12-09
-**Status**: Draft
+**Status**: Draft  
 **Input**: User description: "关于非关系性数据库，我们可以模仿https://app.codecrafters.io/courses/redis/overview 这个链接里的内容去构建它，这个链接里是一个收费的教程，我们可以借鉴它有的所有功能"
 
 ## User Scenarios & Testing *(mandatory)*

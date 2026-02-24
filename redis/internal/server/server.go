@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"zdb/redis/internal/core"
 	"zdb/redis/internal/resp"
 )
 
 // Run starts the TCP server on port 6379.
 // Run 启动监听端口 6379 的 TCP 服务器。
-func Run() {
+func Run(store *core.Store) {
 	// 1. Bind to the port / 绑定端口
 	listener, err := net.Listen("tcp", ":6379")
 	if err != nil {
@@ -28,13 +29,13 @@ func Run() {
 			continue
 		}
 		// 3. Spawn a Goroutine for each connection / 为每个连接启动一个 Goroutine
-		go handleConnection(conn)
+		go handleConnection(conn, store)
 	}
 }
 
 // handleConnection manages the lifecycle of a single client connection.
 // handleConnection 管理单个客户端连接的生命周期。
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, store *core.Store) {
 	defer conn.Close()
 
 	// Initialize RESP Reader and Writer for this connection
@@ -57,7 +58,9 @@ func handleConnection(conn net.Conn) {
 
 		// 2. Execute command (Placeholder for Phase 2) / 执行命令 (Phase 2 的占位符)
 		// Currently just responds with OK to keep connection alive / 目前仅回复 OK 以保持连接
-		if err := writer.Write(resp.Value{Type: "string", Str: "OK"}); err != nil {
+		result := core.EvalCommand(value.Array, store)
+
+		if err := writer.Write(*result); err != nil {
 			fmt.Println("Write error:", err)
 			return
 		}
